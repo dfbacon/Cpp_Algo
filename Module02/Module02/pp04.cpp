@@ -78,11 +78,10 @@ int kSmall(int k, int anArray[], int first, int last) {
         return kSmall(k, anArray, first, pivotIndex - 1);
     
     else if (k == pivotIndex - first + 1) {
-        cout << "k is " << k << endl;
-        return anArray[k];
+        cout << "pivotIndex is " << pivotIndex << endl;
+        return anArray[pivotIndex];
     }
     
     else
         return kSmall(k - (pivotIndex - first + 1), anArray, pivotIndex + 1, last);
-    
 }
