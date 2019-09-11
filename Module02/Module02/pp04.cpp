@@ -29,20 +29,29 @@ void medianOfThree(int anArray[], int first, int middle, int last) {
 
 
 int partition(int anArray[], int first, int last) {
-    int leftIndex = first;
-    int rightIndex = last;
+    int pivot = anArray[first];
+    int leftIndex = first + 1;
+    int rightIndex = last - 2;
+    bool finished = false;
     
-    for (int i = first; i < last; i++) {
+    while (!finished) {
         
-        if (anArray[i] < anArray[rightIndex]) {
-            swap(anArray[i], anArray[leftIndex]);
+        while (anArray[leftIndex] < pivot) {
             leftIndex++;
         }
+        
+        while (anArray[rightIndex] > pivot) {
+            rightIndex--;
+        }
+        
+        if (leftIndex >= rightIndex) {
+            return rightIndex;
+        }
+        
+        swap(anArray[leftIndex], anArray[rightIndex]);
     }
     
-    swap(anArray[rightIndex], anArray[leftIndex]);
-    
-    return leftIndex;
+    return -1;
 }
 
 
@@ -52,7 +61,9 @@ int partition(int anArray[], int first, int last) {
 
 int kSmall(int k, int anArray[], int first, int last) {
     int middleIndex = first + (last - first) / 2;
+    
     medianOfThree(anArray, first, middleIndex, last);
+    swap(anArray[middleIndex], anArray[last - 1]);
     
     int pivotIndex = partition(anArray, first, last);
     
