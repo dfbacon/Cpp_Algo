@@ -9,8 +9,7 @@
 using namespace std;
 
 
-void sortThreeEntries(int anArray[], int first, int middle, int last) {
-
+void medianOfThree(int anArray[], int first, int middle, int last) {
     if (anArray[first] > anArray[middle]) {
         swap(anArray[first], anArray[middle]);
     }
@@ -30,10 +29,11 @@ void sortThreeEntries(int anArray[], int first, int middle, int last) {
 
 
 int partition(int anArray[], int first, int last) {
-
     int leftIndex = first;
     int rightIndex = last;
+    
     for (int i = first; i < last; i++) {
+        
         if (anArray[i] < anArray[rightIndex]) {
             swap(anArray[i], anArray[leftIndex]);
             leftIndex++;
@@ -41,7 +41,7 @@ int partition(int anArray[], int first, int last) {
     }
     
     swap(anArray[rightIndex], anArray[leftIndex]);
-
+    
     return leftIndex;
 }
 
@@ -51,8 +51,9 @@ int partition(int anArray[], int first, int last) {
 
 
 int kSmall(int k, int anArray[], int first, int last) {
-    // Choose a pivot value p from anArray[first..last] p = 0
-    // Partition the values of anArray[first..last] about p
+    int middleIndex = first + (last - first) / 2;
+    medianOfThree(anArray, first, middleIndex, last);
+    
     int pivotIndex = partition(anArray, first, last);
     
     if (k < pivotIndex - first + 1) {
