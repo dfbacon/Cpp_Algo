@@ -18,7 +18,7 @@ int main()
     cout << "answer is: 4" << endl << "kSmall answer is: " << kSmall(position, testArray1, 0, ARRAY_SIZE -1) << endl;
 
     int testArray2[] = {20,11,12,-45,7,18}; //-45, 7, 11, 12, 18, 20
-    position = 9;
+    position = 12;
     cout << "answer is: 11" << endl << "kSmall answer is: " << kSmall(position, testArray2, 0, ARRAY_SIZE -1) << endl;
 
     int testArray[] = {4,3,1,2};
