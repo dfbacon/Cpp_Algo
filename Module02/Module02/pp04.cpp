@@ -2,17 +2,6 @@
  Name: Daniel Bacon
  Class: kSmall
  Assignment: Module 2 - Programming Problem #4.
- 
- The function accepts the arguments outlined in Section 2.4.4
- The function uses the first element of the array as the pivot
- 
- The function is recursive.
- The function differentiates between the three states.
- 
- The function returns the appropriate base case when the base case conditions are met.
- The function divides the problem up into smaller problems that move to the base case.
- The function returns the correct value based on inputs.
- 
  */
 
 #include <algorithm>
@@ -21,6 +10,16 @@ using namespace std;
 int partition(int anArray[], int first, int last);
 
 
+/** Finds the kth smallest integer in an array of integers.
+ 
+ @pre anArray[first..last] is an array of integers.
+ @post anArray[first..last] is at least partially sorted.
+ @param k The element to find.
+ @param anArray The given array.
+ @param first The first element to consider in anArray.
+ @param last The last element to consider in anArray.
+ @return The kth smallest element in @anArray; -1 if not found.
+ */
 int kSmall(int k, int anArray[], int first, int last) {
     
     if (k > 0 && k <= last - first + 1) {
@@ -45,6 +44,16 @@ int kSmall(int k, int anArray[], int first, int last) {
 
 
 
+/** Partitions an array of integers around a pivot. The pivot is the first
+    element to consider in the given array.
+ 
+ @pre anArray[first..last] is an array of integers.
+ @post anArray[first..last] is partitioned around the pivot value.
+ @param anArray The given array.
+ @param first The first element to consider in anArray.
+ @param last The last element to consider in anArray.
+ @return The index of the pivot value.
+ */
 int partition(int anArray[], int first, int last) {
     
     int pivot = anArray[first], rightIndex = last;
