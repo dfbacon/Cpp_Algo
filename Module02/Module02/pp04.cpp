@@ -5,7 +5,6 @@
  */
 
 #include <algorithm>
-
 using namespace std;
 
 
@@ -29,20 +28,48 @@ void medianOfThree(int anArray[], int first, int middle, int last) {
 
 
 int partition(int anArray[], int first, int last) {
-    int leftIndex = first;
-    int rightIndex = last;
+    int mid, pivot, pivotIndex, leftIndex, rightIndex;
+    bool finished = false;
     
-    for (int i = first; i < last; i++) {
+    if (first >= last) {
+        return first;
+    }
+    
+    mid = first + (last - first) / 2;
+    medianOfThree(anArray, first, mid, last);
+    swap(anArray[mid], anArray[last - 1]);
+    
+    pivotIndex = last - 1;
+    pivot = anArray[pivotIndex];
+    leftIndex = first + 1;
+    rightIndex = last - 2;
+    
+    while (!finished) {
+        while (anArray[leftIndex] <= pivot) {
+            leftIndex += 1;
+        }
         
-        if (anArray[i] < anArray[rightIndex]) {
-            swap(anArray[i], anArray[leftIndex]);
-            leftIndex++;
+        while (anArray[rightIndex] > pivot) {
+            rightIndex -= 1;
+        }
+        
+        if (leftIndex < rightIndex) {
+            swap(anArray[leftIndex], anArray[rightIndex]);
+            leftIndex += 1;
+            rightIndex -= 1;
+        }
+        else {
+            finished = true;
         }
     }
     
-    swap(anArray[rightIndex], anArray[leftIndex]);
+    if (leftIndex < pivotIndex) {
+        swap(anArray[pivotIndex], anArray[leftIndex]);
+    }
+  
+    pivotIndex = leftIndex;
     
-    return leftIndex;
+    return pivotIndex;
 }
 
 
@@ -51,20 +78,21 @@ int partition(int anArray[], int first, int last) {
 
 
 int kSmall(int k, int anArray[], int first, int last) {
-    int middleIndex = first + (last - first) / 2;
-    medianOfThree(anArray, first, middleIndex, last);
+    if (k > last || k < 0 || first < 0 || first > last || last < 0) {
+        return -1;
+    }
     
     int pivotIndex = partition(anArray, first, last);
     
-    if (k < pivotIndex - first + 1) {
+    if (k < pivotIndex) {
         return kSmall(k, anArray, first, pivotIndex - 1);
     }
     
-    else if (k == pivotIndex - first + 1) {
-        return anArray[pivotIndex];
+    else if (k == pivotIndex) {
+        return anArray[pivotIndex - 1];
     }
     
     else {
-        return kSmall(k - (pivotIndex - first + 1), anArray, pivotIndex + 1, last);
+        return kSmall(k, anArray, pivotIndex + 1, last);
     }
 }
