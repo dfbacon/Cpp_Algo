@@ -21,20 +21,23 @@ using namespace std;
 int partition(int anArray[], int first, int last);
 
 
-int partition(int anArray[], int first, int last) {
+int kSmall(int k, int anArray[], int first, int last) {
     
-    int pivot = anArray[last], leftIndex = first;
-    
-    for (int searchIndex = first; searchIndex <= last - 1; searchIndex++) {
-        if (anArray[searchIndex] <= pivot) {
-            
-            swap(anArray[leftIndex], anArray[searchIndex]);
-            leftIndex++;
+    if (k > 0 && k <= last - first + 1) {
+        int pivotIndex = partition(anArray, first, last);
+        
+        if (k - 1 < pivotIndex - first) {
+            return kSmall(k, anArray, first, pivotIndex - 1);
+        }
+        else if (k == pivotIndex - first + 1) {
+            return anArray[pivotIndex];
+        }
+        else {
+            return kSmall(k - (pivotIndex - first + 1), anArray, pivotIndex + 1, last);
         }
     }
     
-    swap(anArray[leftIndex], anArray[last]);
-    return leftIndex;
+    return -1;
 }
 
 
@@ -42,21 +45,18 @@ int partition(int anArray[], int first, int last) {
 
 
 
-int kSmall(int k, int anArray[], int first, int last) {
-
-    if (k > 0 && k <= last - first + 1) {
-        int pivotIndex = partition(anArray, first, last);
-        
-        if (k - 1 < pivotIndex - first) {
-            return kSmall(k, anArray, first, pivotIndex - 1);
-        }
-        else if (k - 1 == pivotIndex - first) {
-            return anArray[pivotIndex];
-        }
-        else {
-            return kSmall(k - (pivotIndex + first - 1), anArray, pivotIndex + 1, last);
+int partition(int anArray[], int first, int last) {
+    
+    int pivot = anArray[first], rightIndex = last;
+    
+    for (int searchIndex = last; searchIndex >= first + 1; searchIndex--) {
+        if (anArray[searchIndex] > pivot) {
+            swap(anArray[rightIndex], anArray[searchIndex]);
+            rightIndex--;
         }
     }
     
-    return -1;
+    swap(anArray[rightIndex], anArray[first]);
+    
+    return rightIndex;
 }

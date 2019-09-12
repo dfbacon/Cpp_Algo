@@ -25,12 +25,12 @@ int main()
     position = 2;
     cout << "answer is: 2" << endl << "kSmall answer is: " << kSmall(position, testArray, 0, 3) << endl;
 
-    int sortedArray[] = {1,2,3,4,5,6};
+    int sortedArray[] = {6,5,4,3,2,1};
     position = 4;
     cout << "answer is: 4" << endl << "kSmall answer is: " << kSmall(position, sortedArray, 0, ARRAY_SIZE - 1) << endl;
 
     int largeArray[] = {6, 2, 15, 13, 4, 5, 9, 7, 8, 1, 3, 12, 11, 14, 10};
-    position = 10;
-    cout << "answer is: 10" << endl << "kSmall answer is: " << kSmall(position, largeArray, 0, 14) << endl;
+    position = 13;
+    cout << "answer is: 13" << endl << "kSmall answer is: " << kSmall(position, largeArray, 0, 14) << endl;
 
 }
