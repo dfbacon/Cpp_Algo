@@ -116,11 +116,11 @@ bool Clock::set24() {
 
 void Clock::setMinutes(const int newMinute) throw(out_of_range){
     try {
-        if (newMinute >= 0 && newMinute <= MAX_MINUTES) {
+        if (newMinute >= 0 && newMinute < MAX_MINUTES) {
             this->minutes = newMinute;
         }
         else {
-            throw out_of_range("Value must be between 0 and 60.");
+            throw out_of_range("Value must be between 0 and 59.");
         }
     }
     
@@ -206,24 +206,21 @@ void Clock::setTime(const int newHour, const int newMinute) {
 
 
 void Clock::addMinutes(const int minutesToAdd) throw(out_of_range){
-    int reducedMinutes, hoursToAdd;
+    int hoursToAdd;
     
     try {
         if (minutesToAdd >= 0) {
             
-            reducedMinutes = minutesToAdd % MAX_MINUTES;
             hoursToAdd = minutesToAdd / MAX_MINUTES;
+            minutes += minutesToAdd % MAX_MINUTES;
             
-            while (reducedMinutes > 0) {
-                minutes += 1;
-                                
-                if (minutes == MAX_MINUTES) {
-                    setMinutes(0);
-                    hoursToAdd += 1;
-                    reducedMinutes -= 1;
-                }
-                
-                reducedMinutes -= 1;
+            if (minutes == MAX_MINUTES) {
+                setMinutes(0);
+                hoursToAdd++;
+            }
+            else if (minutes > MAX_MINUTES) {
+                setMinutes(minutes % MAX_MINUTES);
+                hoursToAdd++;
             }
             
             if (hoursToAdd > 0) {
@@ -253,18 +250,22 @@ void Clock::increaseHour(const int hoursToAdd) {
         maxHours = MAX_HOUR_12;
     }
     
-    while (addedHours > maxHours) {
+    if (addedHours > maxHours) {
         addedHours /= maxHours;
     }
     
-    while (addedHours > 0) {
-        hours += 1;
-        
-        if (hours == maxHours) {
+    hours += addedHours;
+    if (hours == maxHours) {
+        if (maxHours == MAX_HOUR_24) {
             setHour(0);
         }
-        
-        addedHours -= 1;
+        else {
+            setHour(12);
+        }
+    }
+    
+    if (hours > maxHours) {
+        setHour(hours % maxHours);
     }
 }
 
@@ -284,7 +285,7 @@ int main(int argc, const char * argv[]) {
     cout << endl;
     
     //TESTING
-    clock24.setTime(23, 0);
+    clock24.setTime(11, 59);
     clock24.displayTime();
     cout << endl;
 
@@ -293,10 +294,15 @@ int main(int argc, const char * argv[]) {
 //    clock24.displayTime();
 //    cout << endl;
 
-    clock24.addMinutes(60);
-    cout << "Minutes added, new time is 00:00 : ";
+    clock24.addMinutes(1380);
+    cout << "Minutes added, new time is 10:59 : ";
     clock24.displayTime();
     cout << endl;
+    
+//    clock24.addMinutes(1500); //adding 25 hours
+//    cout << "Minutes added, new time is 12:59 : ";
+//    clock24.displayTime();
+//    cout << endl;
 
 //    cout << "Error should appear." << endl;
 //    clock24.setTime(25, 0);
