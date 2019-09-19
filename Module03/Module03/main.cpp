@@ -18,18 +18,17 @@ private:
     static const int MAX_HOUR_12 = 12;
     static const int MAX_HOUR_24 = 24;
     int hours, minutes;
-    bool is24;
     
-    bool set24();
     void setMinutes(const int newMinute) throw(out_of_range);
     void setHour(const int newHour) throw(out_of_range);
     void increaseHour(const int hoursToAdd);
     void checkTime();
+    void display12Hour() const;
+    void display24Hour() const;
     
     
 public:
-    Clock(int newHour = 1, int newMinute = 0) : hours(newHour), minutes(newMinute) {
-        is24 = set24();
+    Clock(int newHour = 0, int newMinute = 0) : hours(newHour), minutes(newMinute) {
         checkTime();
     }
     
@@ -57,8 +56,11 @@ public:
 
 
 void Clock::displayTime() const {
-    cout << std::setfill('0') << std::setw(2) << hours << ":" <<
-    std::setfill('0') << std::setw(2) << minutes;
+    cout << "\n12 Hour Mode:" << endl << "\t";
+    display12Hour();
+    cout << "\n24 Hour Mode:" << endl << "\t";
+    display24Hour();
+    cout << endl;
 }
 
 
@@ -111,29 +113,6 @@ void Clock::addMinutes(const int minutesToAdd) throw(out_of_range){
 
 
 
-/** Sets the clock to 12- or 24-hour mode.
- @return Client decision on clock mode. */
-bool Clock::set24() {
-    string userResponse;
-    
-    cout << "DEFAULT MODE: 12 hour.\nWould you like to set clock to " <<
-    "24 hour mode? (Y/N): ";
-    
-    cin >> userResponse;
-    if (userResponse == "y" || userResponse == "Y") {
-        cout << "24 hour mode set." << endl;
-        return true;
-    }
-    
-    cout << "12 hour mode set." << endl;
-    return false;
-}
-
-
-
-
-
-
 /** Sets the minute value.
  @post Minute value has been updated.
  @param newMinute The new minute value. */
@@ -162,21 +141,11 @@ void Clock::setMinutes(const int newMinute) throw(out_of_range){
  @param newHour The new hour value. */
 void Clock::setHour(const int newHour) throw(out_of_range) {
     try {
-        if (is24) {
-            if (newHour >= 0 && newHour < MAX_HOUR_24) {
-                this->hours = newHour;
-            }
-            else {
-                throw out_of_range("Value must be between 0 and 23.");
-            }
+        if (newHour >= 0 && newHour < MAX_HOUR_24) {
+            this->hours = newHour;
         }
         else {
-            if (newHour > 0 && newHour <= MAX_HOUR_12) {
-                this->hours = newHour;
-            }
-            else {
-                throw out_of_range("Value must be between 1 and 12.");
-            }
+            throw out_of_range("Value must be between 0 and 23.");
         }
     }
     
@@ -194,32 +163,19 @@ void Clock::setHour(const int newHour) throw(out_of_range) {
  @post The time has been increased by the given number of hours.
  @param hoursToAdd The number of hours to add. */
 void Clock::increaseHour(const int hoursToAdd) {
-    int maxHours, addedHours = hoursToAdd;
+    int addedHours = hoursToAdd;
     
-    if (is24) {
-        maxHours = MAX_HOUR_24;
-    }
-    else {
-        maxHours = MAX_HOUR_12;
-    }
-    
-    if (addedHours > maxHours) {
-        addedHours %= maxHours;
+    if (addedHours > MAX_HOUR_24) {
+        addedHours %= MAX_HOUR_24;
     }
     
     hours += addedHours;
     
-    if (hours == maxHours) {
-        if (is24) {
-            setHour(0);
-        }
-        else {
-            setHour(12);
-        }
+    if (hours == MAX_HOUR_24) {
+        setHour(0);
     }
-    
-    if (hours > maxHours) {
-        setHour(hours % maxHours);
+    else if (hours > MAX_HOUR_24) {
+        setHour(hours % MAX_HOUR_24);
     }
 }
 
@@ -228,20 +184,49 @@ void Clock::increaseHour(const int hoursToAdd) {
 
 
 
-/** Checks time at creation for validity. If invalid, sets to 01:00 */
+/** Checks time at creation for validity. If invalid, sets to 00:00 */
 void Clock::checkTime() {
-    if (is24) {
-        if (hours < 0 || hours > MAX_HOUR_24) {
-            setHour(1);
-        }
-    }
-    else if (hours < 1 || hours > MAX_HOUR_12) {
-        setHour(1);
+    if (hours < 0 || hours > MAX_HOUR_24) {
+        setHour(0);
     }
     
     if (minutes < 0 || minutes > 60) {
         setMinutes(0);
     }
+}
+
+
+
+
+
+
+/** Displays the time in 12 hour mode. */
+void Clock::display12Hour() const {
+    if (hours == 0) {
+        cout << setfill('0') << setw(2) << (MAX_HOUR_12) <<
+        ":" << setfill('0') << setw(2) << minutes;
+    }
+    
+    else if (hours > MAX_HOUR_12) {
+        cout << setfill('0') << setw(2) << (hours - MAX_HOUR_12) <<
+        ":" << setfill('0') << setw(2) << minutes;
+    }
+    
+    else {
+        cout << setfill('0') << setw(2) << (hours) <<
+        ":" << setfill('0') << setw(2) << minutes;
+    }
+}
+
+
+
+
+
+
+/** Displays the time in 24 hour mode. */
+void Clock::display24Hour() const {
+    cout << setfill('0') << setw(2) << hours << ":" << setfill('0') <<
+    setw(2) << minutes;
 }
 
 
@@ -260,89 +245,58 @@ int main(int argc, const char * argv[]) {
     cout << endl;
 
     clock24.setTime(11, 11);
-    cout << "new time is 11:11 : ";
+    cout << "new time is 11:11" << endl;
     clock24.displayTime();
     cout << endl;
     
     clock24.addMinutes(1500); //adding 25 hours
-    cout << "Minutes added, new time is 12:11 : ";
+    cout << "Minutes added, new time is 12:11" << endl;
     clock24.displayTime();
     cout << endl;
 
-    cout << "Error should appear." << endl;
+    cout << "Error should appear: ";
     clock24.setTime(25, 0);
-    cout << "new time is 12:00 : ";
+    cout << "new time is 12:00" << endl;
     clock24.displayTime();
     cout << endl;
 
-    cout << "Error should appear." << endl;
+    cout << "Error should appear: ";
     clock24.setTime(02, 67);
-    cout << "new time is 02:00 : ";
+    cout << "new time is 02:00" << endl;
     clock24.displayTime();
     cout << endl;
 
-    cout << "Error should appear." << endl;
+    cout << "Error should appear: ";
     clock24.setTime(28, 79);
-    cout << "new time is 02:00 : ";
-    clock24.displayTime();
-    cout << endl;
-
-    clock24.addMinutes(60);
-    cout << "Minutes added.\nTime should be 03:00 : ";
-    clock24.displayTime();
-    cout << endl;
-
-    clock24.addMinutes(61);
-    cout << "Minutes added.\nTime should be 04:01 : ";
-    clock24.displayTime();
-    cout << endl;
-
-    clock24.addMinutes(120);
-    cout << "Minutes added.\nTime should be 06:01 : ";
+    cout << "new time is 02:00" << endl;
     clock24.displayTime();
     cout << endl;
 
     cout << "Error should appear: ";
     clock24.addMinutes(-1);
     cout << endl;
-    cout << "Time should be 06:01 : ";
+    cout << "Time should be 06:01" << endl;
+    clock24.displayTime();
+    cout << endl;
+
+    clock24.setTime(15, 30);
+    cout << "new time is 03:30" << endl;
     clock24.displayTime();
     cout << endl;
     
-    cout << "\n----------------- TESTING 12 HOUR ---------------------" << endl;
-    clock12.displayTime();
-    cout << endl;
-
-    clock12.setTime(03, 16);
-    cout << "new time is 03:16 : ";
-    clock12.displayTime();
-    cout << endl;
-
-    clock12.setTime(15, 30);
-    cout << "new time is 03:30 : ";
-    clock12.displayTime();
+    clock24.addMinutes(75);
+    cout << "Minutes added.\nTime should be 04:45" << endl;
+    clock24.displayTime();
     cout << endl;
     
-    cout << "Error should appear: ";
-    clock12.addMinutes(-1);
-    cout << endl;
-    cout << "Time should be 03:30 : ";
-    clock12.displayTime();
+    clock24.addMinutes(480);
+    cout << "Minutes added.\nTime should be 12:45" << endl;
+    clock24.displayTime();
     cout << endl;
     
-    clock12.addMinutes(75);
-    cout << "Minutes added.\nTime should be 04:45 : ";
-    clock12.displayTime();
-    cout << endl;
-    
-    clock12.addMinutes(480);
-    cout << "Minutes added.\nTime should be 12:45 : ";
-    clock12.displayTime();
-    cout << endl;
-    
-    clock12.addMinutes(40);
-    cout << "Minutes added.\nTime should be 01:25 : ";
-    clock12.displayTime();
+    clock24.addMinutes(40);
+    cout << "Minutes added.\nTime should be 01:25" << endl;
+    clock24.displayTime();
     cout << endl;
     
     return 0;
