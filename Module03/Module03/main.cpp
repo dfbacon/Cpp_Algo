@@ -193,11 +193,11 @@ void Clock::increaseHour(const int hoursToAdd) {
 
 
 void Clock::checkTime() {
-    if (hours < 0 || hours > MAX_HOUR_24) {
+    if (hours < 0 || hours >= MAX_HOUR_24) {
         setHour(0);
     }
     
-    if (minutes < 0 || minutes > 60) {
+    if (minutes < 0 || minutes >= 60) {
         setMinutes(0);
     }
 }
