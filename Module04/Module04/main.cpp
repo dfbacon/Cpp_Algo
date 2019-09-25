@@ -143,6 +143,63 @@ Node<ItemType>* Node<ItemType>::getPrev() const {
 }
 
 
+template <class ItemType>
+LinkedBag<ItemType>::LinkedBag() : head(nullptr), itemCount(0) {}
+
+
+template <class ItemType>
+LinkedBag<ItemType>::LinkedBag(const LinkedBag<ItemType>& aBag) {}
+
+
+template <class ItemType>
+LinkedBag<ItemType>::~LinkedBag() {}
+
+
+template <class ItemType>
+Node<ItemType>* LinkedBag<ItemType>::getPointerTo(const ItemType& target) const {
+    return nullptr;
+}
+
+
+template <class ItemType>
+int LinkedBag<ItemType>::getCurrentSize() const {
+    return 0;
+}
+
+
+template <class ItemType>
+bool LinkedBag<ItemType>::isEmpty() const {
+    return false;
+}
+
+
+template <class ItemType>
+bool LinkedBag<ItemType>::add(const ItemType& newEntry) {
+    return false;
+}
+
+
+template <class ItemType>
+bool LinkedBag<ItemType>::remove(const ItemType& anEntry) {
+    return false;
+}
+
+
+template <class ItemType>
+void LinkedBag<ItemType>::clear() {}
+
+
+template <class ItemType>
+bool LinkedBag<ItemType>::contains(const ItemType& anEntry) const {
+    return false;
+}
+
+
+template <class ItemType>
+int LinkedBag<ItemType>::getFrequencyOf(const ItemType& anEntry) const {
+    return 0;
+}
+
 
 
 int main(int argc, const char * argv[]) {
