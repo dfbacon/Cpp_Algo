@@ -215,7 +215,7 @@ void LinkedBag<ItemType>::clear() {}
 
 template <class ItemType>
 bool LinkedBag<ItemType>::contains(const ItemType& anEntry) const {
-    return false;
+    return (getPointerTo(anEntry) != nullptr );
 }
 
 
@@ -290,7 +290,8 @@ void bagTester(LinkedBag<string>& bag) {
     cout << "Try to add another entry: add(\"extra\") returns " << bag.add("extra") << endl;
     
     cout << "Testing frequency, should be 2: " << bag.getFrequencyOf("one") << endl;
-
+    cout << "Testing contains, should be true (1): " << bag.contains("two") << endl;
+    cout << "Testing contains, should be false (0): " << bag.contains("nine") << endl;
 }
 
 
