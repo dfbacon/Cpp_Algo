@@ -155,7 +155,20 @@ LinkedBag<ItemType>::~LinkedBag() {}
 
 template <class ItemType>
 Node<ItemType>* LinkedBag<ItemType>::getPointerTo(const ItemType& target) const {
-    return nullptr;
+    bool found = false ;
+    Node<ItemType>* current = head;
+    
+    while (!found && (current != nullptr )) {
+        if (target == current->getData()) {
+            found = true ;
+        }
+        
+        else {
+            current = current->getNext();
+        }
+    }
+    
+    return current;
 }
 
 
@@ -277,6 +290,7 @@ void bagTester(LinkedBag<string>& bag) {
     cout << "Try to add another entry: add(\"extra\") returns " << bag.add("extra") << endl;
     
     cout << "Testing frequency, should be 2: " << bag.getFrequencyOf("one") << endl;
+
 }
 
 
