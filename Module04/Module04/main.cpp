@@ -98,10 +98,10 @@ Node<ItemType>::Node(const ItemType& newData, Node<ItemType>* newNextPtr,
 
 template <class ItemType>
 Node<ItemType>::~Node() {
-    nextNode = nullptr;
-    prevNode = nullptr;
     delete(nextNode);
     delete(prevNode);
+    nextNode = nullptr;
+    prevNode = nullptr;
 }
 
 
@@ -150,7 +150,9 @@ LinkedBag<ItemType>::LinkedBag(const LinkedBag<ItemType>& aBag) {}
 
 
 template <class ItemType>
-LinkedBag<ItemType>::~LinkedBag() {}
+LinkedBag<ItemType>::~LinkedBag() {
+    clear();
+}
 
 
 template <class ItemType>
@@ -158,7 +160,7 @@ Node<ItemType>* LinkedBag<ItemType>::getPointerTo(const ItemType& target) const 
     bool found = false ;
     Node<ItemType>* current = head;
     
-    while (!found && (current != nullptr )) {
+    while (!found && (current != nullptr)) {
         if (target == current->getData()) {
             found = true ;
         }
@@ -205,17 +207,46 @@ bool LinkedBag<ItemType>::add(const ItemType& newEntry) {
 
 template <class ItemType>
 bool LinkedBag<ItemType>::remove(const ItemType& anEntry) {
-    return false;
+    Node<ItemType>* targetNode = getPointerTo(anEntry);
+    bool canRemoveItem = !isEmpty() && (targetNode != nullptr);
+    
+    if (canRemoveItem) {
+        targetNode->setData(head->getData());
+        
+        Node<ItemType>* nodeToDelete = head;
+        head = head->getNext();
+        
+        nodeToDelete->setNextPtr(nullptr);
+        nodeToDelete->setPrevPtr(nullptr);
+        delete nodeToDelete;
+        nodeToDelete = nullptr;
+        
+        itemCount--;
+    }
+    
+    return canRemoveItem;
 }
 
 
 template <class ItemType>
-void LinkedBag<ItemType>::clear() {}
+void LinkedBag<ItemType>::clear() {
+    while (head != nullptr) {
+        Node<ItemType>* nodeToDelete = head;
+        head = head->getNext();
+
+        nodeToDelete->setNextPtr(nullptr);
+        nodeToDelete->setPrevPtr(nullptr);
+        delete nodeToDelete;
+        nodeToDelete = nullptr;
+    }
+    
+    itemCount = 0;
+}
 
 
 template <class ItemType>
 bool LinkedBag<ItemType>::contains(const ItemType& anEntry) const {
-    return (getPointerTo(anEntry) != nullptr );
+    return (getPointerTo(anEntry) != nullptr);
 }
 
 
@@ -290,8 +321,15 @@ void bagTester(LinkedBag<string>& bag) {
     cout << "Try to add another entry: add(\"extra\") returns " << bag.add("extra") << endl;
     
     cout << "Testing frequency, should be 2: " << bag.getFrequencyOf("one") << endl;
+   
     cout << "Testing contains, should be true (1): " << bag.contains("two") << endl;
     cout << "Testing contains, should be false (0): " << bag.contains("nine") << endl;
+    
+    cout << "Testing remove, should be true (1): " << bag.remove("three") << endl;
+    cout << "Testing remove, should be false (0): " << bag.remove("three") << endl;
+    
+    bag.clear();
+    cout << "Testing clear, should be 0: " << bag.getCurrentSize() << endl;
 }
 
 
