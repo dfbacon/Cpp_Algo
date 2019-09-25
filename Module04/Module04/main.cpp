@@ -21,10 +21,6 @@
  the LinkedBag code to handle a double linked list.
  
  Key Topics
-    Modification of the Node class: Constructor/descructor for the new node (w/
-        a next and prev pointers)
- 
-    Modification of the Node class: addition of setPrev and getPrev Functions
 
     Modification of the LinkedBag class: constructors and destructors
  
@@ -212,19 +208,31 @@ bool LinkedBag<ItemType>::contains(const ItemType& anEntry) const {
 
 template <class ItemType>
 int LinkedBag<ItemType>::getFrequencyOf(const ItemType& anEntry) const {
-    return 0;
+    int frequency = 0, counter = 0;
+    Node<ItemType>* current = head;
+    
+    while ((current != nullptr) && (counter < itemCount)) {
+        if (anEntry == current->getData()) {
+            frequency++;
+        }
+        
+        counter ++;
+        current = current->getNext();
+    }
+    
+    return frequency;
 }
 
 
 template < class ItemType>
 vector<ItemType> LinkedBag<ItemType>::toVector() const {
     vector<ItemType> bagContents;
-    Node<ItemType>* curPtr = head;
+    Node<ItemType>* current = head;
     int counter = 0;
     
-    while ((curPtr != nullptr) && (counter < itemCount)) {
-        bagContents.push_back(curPtr->getData());
-        curPtr = curPtr->getNext();
+    while ((current != nullptr) && (counter < itemCount)) {
+        bagContents.push_back(current->getData());
+        current = current->getNext();
         counter++;
     }
     
@@ -267,7 +275,10 @@ void bagTester(LinkedBag<string>& bag) {
     cout << "isEmpty: returns " << bag.isEmpty() << "; should be 0 (false)" << endl;
     cout << "getCurrentSize: returns " << bag.getCurrentSize() << "; should be 6" << endl;
     cout << "Try to add another entry: add(\"extra\") returns " << bag.add("extra") << endl;
+    
+    cout << "Testing frequency, should be 2: " << bag.getFrequencyOf("one") << endl;
 }
+
 
 int main(int argc, const char * argv[]) {
     LinkedBag<string> bag;
