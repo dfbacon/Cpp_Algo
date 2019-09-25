@@ -36,9 +36,134 @@
     main.cpp  demonstrates an addition and removal from the double linked list.
  */
 #include <iostream>
+using namespace std;
+
+// Node class definition.
+template <class ItemType>
+class Node {
+private:
+    ItemType data;
+    Node<ItemType>* nextNode;
+    Node<ItemType>* prevNode;
+    
+public:
+    Node();
+    Node(const ItemType& newData);
+    Node(const ItemType& newData, Node<ItemType>* newNextPtr, Node<ItemType>* newPrevPtr);
+    virtual ~Node();
+    void setData(const ItemType& newData);
+    void setNextPtr(Node<ItemType>* newNext);
+    void setPrevPtr(Node<ItemType>* newPrev);
+    ItemType getData() const;
+    Node<ItemType>* getNext() const;
+    Node<ItemType>* getPrev() const;
+    
+};
+
+
+// LinkedBag class definition.
+template <class ItemType>
+class LinkedBag {
+private:
+    Node<ItemType>* head;
+    int itemCount;
+    Node<ItemType>* getPointerTo(const ItemType& target) const;
+    
+public:
+    LinkedBag();
+    LinkedBag(const LinkedBag<ItemType>& aBag);
+    virtual ~LinkedBag();
+    int getCurrentSize() const;
+    bool isEmpty() const;
+    bool add(const ItemType& newEntry);
+    bool remove(const ItemType& anEntry);
+    void clear();
+    bool contains(const ItemType& anEntry) const ;
+    int getFrequencyOf(const ItemType& anEntry) const;
+};
+
+
+
+
+template <class ItemType>
+Node<ItemType>::Node() : nextNode(nullptr), prevNode(nullptr) {}
+
+
+template <class ItemType>
+Node<ItemType>::Node(const ItemType& newData) : data(newData), nextNode(nullptr), prevNode(nullptr) {}
+
+
+template <class ItemType>
+Node<ItemType>::Node(const ItemType& newData, Node<ItemType>* newNextPtr,
+                     Node<ItemType>* newPrevPtr) : data(newData), nextNode(newNextPtr), prevNode(newPrevPtr){}
+
+
+template <class ItemType>
+Node<ItemType>::~Node() {
+    nextNode = nullptr;
+    prevNode = nullptr;
+    delete(nextNode);
+    delete(prevNode);
+}
+
+
+template <class ItemType>
+void Node<ItemType>::setData(const ItemType& newData) {
+    data = newData;
+}
+
+
+template <class ItemType>
+void Node<ItemType>::setNextPtr(Node<ItemType>* newNext) {
+    nextNode = newNext;
+}
+
+
+template<class ItemType>
+void Node<ItemType>::setPrevPtr(Node<ItemType>* newPrev) {
+    prevNode = newPrev;
+}
+
+
+template <class ItemType>
+ItemType Node<ItemType>::getData() const {
+    return data;
+}
+
+
+template <class ItemType>
+Node<ItemType>* Node<ItemType>::getNext() const {
+    return nextNode;
+}
+
+
+template <class ItemType>
+Node<ItemType>* Node<ItemType>::getPrev() const {
+    return prevNode;
+}
+
+
+
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+
+    Node<int> zeroNode(0);
+    Node<int> secondNode(2);
+    Node<int> firstNode(1, &secondNode, &zeroNode);
+    Node<int> emptyNode;
+    
+    cout << firstNode.getData() << endl;
+    cout << firstNode.getNext() << endl;
+    cout << firstNode.getPrev() << endl;
+    
+    cout << zeroNode.getPrev() << endl;
+    zeroNode.setNextPtr(&firstNode);
+    cout << "firstNode location: " << &firstNode << endl;
+    cout << zeroNode.getNext() << endl;
+    
+    cout << secondNode.getNext() << endl;
+    
+    cout << emptyNode.getData() << endl;
+    
     return 0;
 }
