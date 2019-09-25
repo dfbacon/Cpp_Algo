@@ -36,6 +36,7 @@
     main.cpp  demonstrates an addition and removal from the double linked list.
  */
 #include <iostream>
+#include <vector>
 using namespace std;
 
 // Node class definition.
@@ -80,6 +81,7 @@ public:
     void clear();
     bool contains(const ItemType& anEntry) const ;
     int getFrequencyOf(const ItemType& anEntry) const;
+    vector<ItemType> toVector() const;
 };
 
 
@@ -163,19 +165,32 @@ Node<ItemType>* LinkedBag<ItemType>::getPointerTo(const ItemType& target) const 
 
 template <class ItemType>
 int LinkedBag<ItemType>::getCurrentSize() const {
-    return 0;
+    return itemCount;
 }
 
 
 template <class ItemType>
 bool LinkedBag<ItemType>::isEmpty() const {
-    return false;
+    return itemCount == 0;
 }
 
 
 template <class ItemType>
 bool LinkedBag<ItemType>::add(const ItemType& newEntry) {
-    return false;
+    Node<ItemType>* newNode = new Node<ItemType>();
+    
+    newNode->setData(newEntry);
+    
+    if (head != nullptr) {
+        newNode->setNextPtr(head);
+        head->setPrevPtr(newNode);
+    }
+
+    head = newNode;
+    
+    itemCount++;
+    
+    return true ;
 }
 
 
@@ -201,26 +216,64 @@ int LinkedBag<ItemType>::getFrequencyOf(const ItemType& anEntry) const {
 }
 
 
+template < class ItemType>
+vector<ItemType> LinkedBag<ItemType>::toVector() const {
+    vector<ItemType> bagContents;
+    Node<ItemType>* curPtr = head;
+    int counter = 0;
+    
+    while ((curPtr != nullptr) && (counter < itemCount)) {
+        bagContents.push_back(curPtr->getData());
+        curPtr = curPtr->getNext();
+        counter++;
+    }
+    
+    return bagContents;
+}
+
+
+
+
+
+
+
+void displayBag(LinkedBag<string>& bag) {
+    cout << "The bag contains " << bag.getCurrentSize() << " items:" << endl;
+    
+    vector<string> bagItems = bag.toVector();
+    int numberOfEntries = (int)bagItems.size();
+    
+    for (int i = 0; i < numberOfEntries; i++) {
+        cout << bagItems[i] << " ";
+    }
+    
+    cout << endl << endl;
+}
+
+
+void bagTester(LinkedBag<string>& bag) {
+    cout << "isEmpty: returns " << bag.isEmpty() << "; should be 1 (true)" << endl;
+    displayBag(bag);
+
+    string items[] = {"one", "two", "three", "four", "five", "one"};
+    cout << "Add 6 items to the bag: " << endl;
+
+    for (int i = 0; i < 6; i++) {
+        bag.add(items[i]);
+    }
+
+    displayBag(bag);
+
+    cout << "isEmpty: returns " << bag.isEmpty() << "; should be 0 (false)" << endl;
+    cout << "getCurrentSize: returns " << bag.getCurrentSize() << "; should be 6" << endl;
+    cout << "Try to add another entry: add(\"extra\") returns " << bag.add("extra") << endl;
+}
 
 int main(int argc, const char * argv[]) {
-
-    Node<int> zeroNode(0);
-    Node<int> secondNode(2);
-    Node<int> firstNode(1, &secondNode, &zeroNode);
-    Node<int> emptyNode;
-    
-    cout << firstNode.getData() << endl;
-    cout << firstNode.getNext() << endl;
-    cout << firstNode.getPrev() << endl;
-    
-    cout << zeroNode.getPrev() << endl;
-    zeroNode.setNextPtr(&firstNode);
-    cout << "firstNode location: " << &firstNode << endl;
-    cout << zeroNode.getNext() << endl;
-    
-    cout << secondNode.getNext() << endl;
-    
-    cout << emptyNode.getData() << endl;
-    
+    LinkedBag<string> bag;
+    cout << "Testing the Linked-Based Bag:" << endl;
+    cout << "The initial bag is empty." << endl;
+    bagTester(bag);
+    cout << "All done!" << endl;
     return 0;
 }
