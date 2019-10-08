@@ -15,18 +15,9 @@
  
  Use the STL library stack and see the note at the bottom of programming problem 1.
  
- Student Learning Objectives.
- Although this solution can be solved with simple looping - we want to demonstrate
-    an understanding of stack structures to check for a palindrome. This is
-    directly related to SLO #1: Predict the results of data structures, including
-    lists, stacks, queues, trees, graphs, heaps, and hash tables, with associated
-    algorithms such as insertion, deletion, retrieval, search, and traversal.
- 
  Submission and Assessment
  To submit this assignment, use the submit button (Links to an external site.)
     and type your answer into the available text box.
- 
- You can expect to get a your assignment grade and feedback in one (1) week.
  
  Key Topics
  Input
@@ -45,9 +36,47 @@
  */
 
 #include <iostream>
+#include <stack>
+
+using namespace std;
+
+bool isPalindrome(string testString) {
+    if (!testString.empty()) {
+        
+        int stringLength = testString.length();
+        stack<char> stringStack;
+        
+        for (int index = 0; index < stringLength / 2; index++) {
+            stringStack.push(testString[index]);
+        }
+        
+        for (int index = (stringLength + 1) / 2 ; index < stringLength; index++) {
+            if (stringStack.top() != testString[index]) {
+                return false;
+            }
+            
+            stringStack.pop();
+        }
+    }
+    
+    return true;
+}
+
+
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    
+    string string1 = "abba is si abba";
+    string string2 = "abc";
+    string string3 = "";
+    string string4 = "a";
+    string string5 = "abcba";
+
+    cout << "Testing... should be true(1): " << isPalindrome(string1) << endl;
+    cout << "Testing... should be false(0): " << isPalindrome(string2) << endl;
+    cout << "Testing... should be true(1): " << isPalindrome(string3) << endl;
+    cout << "Testing... should be true(1): " << isPalindrome(string4) << endl;
+    cout << "Testing... should be true(1): " << isPalindrome(string5) << endl;
+    
     return 0;
 }
