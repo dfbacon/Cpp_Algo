@@ -1,45 +1,19 @@
 //
-//  main.cpp
-//  Module06
+// Name: Daniel Bacon
+// Assignment: Module 06 - Programming Problem #3
 //
-//  Created by Daniel Bacon on 10/7/19.
-//  Copyright © 2019 Daniel Bacon. All rights reserved.
-//
-
-/**
- Programming Problem #3
- Data Abstraction and Problem Solving with C++ 6th ed page 221
- 
- Write a function that uses a stack to test whether a given string is a
-    palindrome. Exercise 14 asked you to write an algorithm for such a function
- 
- Use the STL library stack and see the note at the bottom of programming problem 1.
- 
- Submission and Assessment
- To submit this assignment, use the submit button (Links to an external site.)
-    and type your answer into the available text box.
- 
- Key Topics
- Input
- 
- accept a string
- add characters to the stack
- Processing
- 
- push
- pop
- isEmpty
- peek
- Output
- 
- use stack methods to check for palindromes
- */
 
 #include <iostream>
 #include <stack>
 
 using namespace std;
 
+/**
+    Checks if a string is a palindrome, using a stack data structure.
+ 
+    @param testString The string being examined.
+    @return true if the string is a palindrome, false otherwise.
+ */
 bool isPalindrome(string testString) {
     if (!testString.empty()) {
         
