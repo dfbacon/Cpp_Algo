@@ -88,6 +88,10 @@ class ListInterface {
 };
 
 
+
+
+
+
 template <class ItemType>
 class ArrayList : public ListInterface<ItemType> {
     private :
@@ -107,9 +111,11 @@ class ArrayList : public ListInterface<ItemType> {
             int tempItemCount = itemCount;
             
             // Uncomment for testing.
-//            cout << "Expanding..." << endl;
-//            cout << "List size before expansion: " << maxItems << endl;
-//            cout << "items location before expansions: " << &items[0] << endl;
+            /*
+            cout << "Expanding..." << endl;
+            cout << "List size before expansion: " << maxItems << endl;
+            cout << "items location before expansions: " << &items[0] << endl;
+             */
             
             maxItems *= 2;
             newItems = new ItemType[maxItems];
@@ -125,9 +131,11 @@ class ArrayList : public ListInterface<ItemType> {
             itemCount = tempItemCount;
             
             // Uncomment for testing.
-//            cout << "List size after expansion: " << maxItems << endl;
-//            cout << "items location after expansion (should be different" <<
-//                " than original address): " << &items[0] << endl;
+            /*
+            cout << "List size after expansion: " << maxItems << endl;
+            cout << "items location after expansion (should be different" <<
+                " than original address): " << &items[0] << endl;
+             */
             
             newItems = nullptr;
             delete newItems;
@@ -146,9 +154,11 @@ class ArrayList : public ListInterface<ItemType> {
             int tempItemCount = itemCount;
             
             // Uncomment for testing.
-//            cout << "Contracting..." << endl;
-//            cout << "List size before contraction: " << maxItems << endl;
-//            cout << "items location before contraction: " << &items[0] << endl;
+            /*
+            cout << "Contracting..." << endl;
+            cout << "List size before contraction: " << maxItems << endl;
+            cout << "items location before contraction: " << &items[0] << endl;
+             */
             
             maxItems *= 0.75;
             reducedItems = new ItemType[maxItems];
@@ -164,9 +174,11 @@ class ArrayList : public ListInterface<ItemType> {
             itemCount = tempItemCount;
             
             // Uncomment for testing.
-//            cout << "List size after contraction: " << maxItems << endl;
-//            cout << "items location after contraction (should be different" <<
-//            " than original address): " << &items[0] << endl;
+            /*
+            cout << "List size after contraction: " << maxItems << endl;
+            cout << "items location after contraction (should be different" <<
+            " than original address): " << &items[0] << endl;
+             */
             
             reducedItems = nullptr;
             delete reducedItems;
@@ -260,6 +272,10 @@ class ArrayList : public ListInterface<ItemType> {
 };
 
 
+
+
+
+
 int main(int argc, const char * argv[]) {
     ArrayList<int> intList;
     
@@ -285,17 +301,18 @@ int main(int argc, const char * argv[]) {
             cout << "Removed first entry. List size should be 23 : " <<
                 intList.getLength() << endl;
         }
-    }
-
-    cout << "Removing multiple items..." << endl;
-    for (int i = 24; i > 12; i--) {
-        intList.remove(i);
-    }
-
-    cout << "List size should be 12 : " << intList.getLength() << endl;
     
-    cout << "Clearing list..." << endl;
-    intList.clear();
+        cout << "Removing multiple items..." << endl;
+        for (int i = 24; i > 12; i--) {
+            intList.remove(i);
+        }
+
+        cout << "List size should be 12 : " << intList.getLength() << endl;
+        
+        cout << "Clearing list..." << endl;
+        intList.clear();
+    }
+    
     cout << "List size should be 0 : " << intList.getLength() << endl;
 
     return 0;
