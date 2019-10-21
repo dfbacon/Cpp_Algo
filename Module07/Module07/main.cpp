@@ -184,7 +184,7 @@ class ArrayList : public ListInterface<ItemType> {
             }
             
             if (ableToInsert) {
-                for ( int pos = itemCount; pos >= newPosition; pos--)
+                for (int pos = itemCount; pos >= newPosition; pos--)
                     items[pos] = items[pos - 1];
 
                 items[newPosition - 1] = newEntry;
@@ -240,12 +240,36 @@ class ArrayList : public ListInterface<ItemType> {
                 items[position - 1] = newEntry;
             }
         }
+    
 };
 
+template <class ItemType>
+bool swap(ArrayList<ItemType>& aList, int i, int j) {
+    bool ableToSwap;
+    
+    if (i > j || i < 1 || j > aList.getLength()) {
+        ableToSwap = false;
+    }
+    else {
+        ItemType tempEntry = aList.getEntry(i);
+        aList.setEntry(i, aList.getEntry(j));
+        aList.setEntry(j, tempEntry);
+        
+        ableToSwap = true;
+    }
+    
+    return ableToSwap;
+}
 
 
-
-
+template <class ItemType>
+void reverse(ArrayList<ItemType>& aList) {
+    if (!aList.isEmpty()) {
+        for (int first = 1, last = aList.getLength(); first <= last; first++, last--) {
+            swap(aList, first, last);
+        }
+    }
+}
 
 int main(int argc, const char * argv[]) {
     ArrayList<int> intList;
@@ -257,42 +281,47 @@ int main(int argc, const char * argv[]) {
     
     cout << "List is empty. Should be 1 : " << intList.isEmpty() << endl;
     
-    for (int i = 1; i < 25; i++) {
-        intList.insert(i, i);
-    }
+
+    intList.insert(1, 1);
+    intList.insert(2, 2);
+    intList.insert(3, 3);
+    intList.insert(4, 4);
 
     if (!intList.isEmpty()) {
-        cout << "Entries added." << endl;
-        cout << "First entry should be 1 : " << intList.getEntry(1) << endl;
-        intList.setEntry(1, 100);
-        cout << "Change first entry to 100 : " << intList.getEntry(1) << endl;
-        
-        cout << "Before removal, list size is 24 : " << intList.getLength() << endl;
-        if (intList.remove(1)) {
-            cout << "Removed first entry. List size should be 23 : " <<
-                intList.getLength() << endl;
+        reverse(intList);
+        for (int i = 1; i < intList.getLength() + 1; i++) {
+            cout << intList.getEntry(i) << endl;
         }
         
-        intList.insert(1000, 777);
-        cout << "Inserting new element outside of array bounds. List size " <<
-            "should still be 23 : " << intList.getLength() << endl;
-        
-        intList.remove(1000);
-        cout << "Removing outside of array bounds. List size " <<
-            "should still be 23 : " << intList.getLength() << endl;
-    
-        cout << "Removing multiple items..." << endl;
-        for (int i = 24; i > 12; i--) {
-            intList.remove(i);
-        }
-
-        cout << "List size should be 12 : " << intList.getLength() << endl;
-        
-        cout << "Clearing list..." << endl;
-        intList.clear();
+//        intList.setEntry(1, 100);
+//        cout << "Change first entry to 100 : " << intList.getEntry(1) << endl;
+//
+//        cout << "Before removal, list size is 24 : " << intList.getLength() << endl;
+//        if (intList.remove(1)) {
+//            cout << "Removed first entry. List size should be 23 : " <<
+//                intList.getLength() << endl;
+//        }
+//
+//        intList.insert(1000, 777);
+//        cout << "Inserting new element outside of array bounds. List size " <<
+//            "should still be 23 : " << intList.getLength() << endl;
+//
+//        intList.remove(1000);
+//        cout << "Removing outside of array bounds. List size " <<
+//            "should still be 23 : " << intList.getLength() << endl;
+//
+//        cout << "Removing multiple items..." << endl;
+//        for (int i = 24; i > 12; i--) {
+//            intList.remove(i);
+//        }
+//
+//        cout << "List size should be 12 : " << intList.getLength() << endl;
+//
+//        cout << "Clearing list..." << endl;
+//        intList.clear();
+//    }
+//
+//    cout << "List size should be 0 : " << intList.getLength() << endl;
     }
-    
-    cout << "List size should be 0 : " << intList.getLength() << endl;
-
     return 0;
 }
