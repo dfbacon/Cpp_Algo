@@ -183,7 +183,7 @@ class LinkedList : public ListInterface<ItemType> {
             
             LinkedList<ItemType>* tempList = new LinkedList<ItemType>();
             
-            for (int index = 1; index < aList.getLength(); index++) {
+            for (int index = 1; index <= aList.getLength(); index++) {
                 
                 tempList->insert(index, aList.getEntry(index));
             }
@@ -384,29 +384,76 @@ class SortedListHasA : public SortedListInterface<ItemType> {
     
     private:
     ListInterface<ItemType>* listPtr;
-    int itemCount;
     
     public:
     SortedListHasA() {
-        itemCount = 0;
-        listPtr = new (<#expressions#>)
+        
+        listPtr = new LinkedList<ItemType>();
     }
     
-    SortedListHasA(const SortedListHasA<ItemType>& sList);
-    virtual ~SortedListHasA();
-    void insertSorted(const ItemType& newEntry);
-    bool removeSorted(const ItemType& anEntry);
+    
+    SortedListHasA(const SortedListHasA<ItemType>& sList) {
+        
+        listPtr = new LinkedList<ItemType>();
+        
+        for (int index = 1; index <= sList.getLength(); index++) {
+
+            listPtr->insert(index, sList.getEntry(index));
+        }
+    }
+    
+    
+    virtual ~SortedListHasA() {
+        
+        clear();
+    }
+    
+    
+    void insertSorted(const ItemType& newEntry) {
+        
+        int newPosition = fabs(getPosition(newEntry));
+        
+        listPtr->insert(newPosition, newEntry);
+    }
+    
+    // TODO
+    bool removeSorted(const ItemType& anEntry) {
+        
+        
+    }
+    
+    // TODO
     int getPosition(const ItemType& newEntry) const;
 
-    bool isEmpty() const {}
     
-    int getLength() const {}
+    bool isEmpty() const {
+        
+        return listPtr->isEmpty();
+    }
     
-    bool remove(int position) {}
     
-    void clear() {}
+    int getLength() const {
+        
+        return listPtr->getLength();
+    }
     
-    ItemType getEntry(int position) const throw(PrecondViolatedExcep) {}
+    
+    bool remove(int position) {
+        
+        return listPtr->remove(position);
+    }
+    
+    
+    void clear() {
+        
+        listPtr->clear();
+    }
+    
+    
+    ItemType getEntry(int position) const throw(PrecondViolatedExcep) {
+        
+        return listPtr->getEntry(position);
+    }
 };
 
 
