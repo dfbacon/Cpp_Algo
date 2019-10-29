@@ -143,7 +143,7 @@ class ListInterface {
      @param position The list position of the entry to replace.
      @param newEntry The replacement entry. */
     virtual void setEntry(int position, const ItemType& newEntry) = 0;
-};
+}; // End ListInterface
 
 
 
@@ -316,7 +316,7 @@ class LinkedList : public ListInterface<ItemType> {
             throw PrecondViolatedExcep(message);
         }
     }
-};
+}; // End LinkedList
 
 
 
@@ -372,7 +372,7 @@ class SortedListInterface: LinkedList<ItemType> {
     
     /** Gets the entry at the given position in this list. */
     virtual ItemType getEntry(int position) const = 0;
-};
+}; // End SortedListInterface
 
 
 
@@ -422,8 +422,27 @@ class SortedListHasA : public SortedListInterface<ItemType> {
         
     }
     
-    // TODO
-    int getPosition(const ItemType& newEntry) const;
+
+    int getPosition(const ItemType& newEntry) const {
+
+        for (int backIndex = 1, frontIndex = backIndex + 1; backIndex <= getLength(); backIndex++) {
+
+            if (getEntry(backIndex) == newEntry) {
+                
+                return backIndex;
+            }
+            else if (getEntry(frontIndex) == newEntry) {
+                
+                return frontIndex;
+            }
+            else if (getEntry(backIndex) > newEntry && getEntry(frontIndex) < newEntry) {
+                
+                return frontIndex * -1;
+            }
+        }
+        
+        return getLength() * -1;
+    }
 
     
     bool isEmpty() const {
@@ -454,7 +473,7 @@ class SortedListHasA : public SortedListInterface<ItemType> {
         
         return listPtr->getEntry(position);
     }
-};
+}; // End SortedListHasA
 
 
 
