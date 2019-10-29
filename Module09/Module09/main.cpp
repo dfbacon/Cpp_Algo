@@ -38,19 +38,66 @@
 #include <iostream>
 #include <string>
 #include <stdexcept>
+#include <cstddef>
+#include <cassert>
 
 using namespace std;
 
-class PrecondViolatedExcep: public logic_error
-{
-    public :
-    PrecondViolatedExcep(const string& message = ""):
+class PrecondViolatedExcep: public logic_error {
+    
+    public:
+    PrecondViolatedExcep(const string& message = "") :
         logic_error("Precondition Violated Exception: " + message){}
 };
 
+
+
+
+
+
+template <class ItemType>
+class Node {
+    
+    private:
+    ItemType item;
+    Node<ItemType>* next;
+    
+    public :
+    Node() : next(nullptr) {}
+    Node(const ItemType& anItem) : item(anItem), next(nullptr) {}
+    Node(const ItemType& anItem, Node<ItemType>* nextNodePtr) :
+        item(anItem), next(nextNodePtr) {}
+    
+    void setItem(const ItemType& anItem) {
+        
+        item = anItem;
+    }
+    
+    void setNext(Node<ItemType>* nextNodePtr) {
+        
+        next = nextNodePtr;
+    }
+    
+    ItemType getItem() const {
+        
+        return item;
+    }
+    
+    Node<ItemType>* getNext() const {
+        
+        return next;
+    }
+};
+
+
+
+
+
+
 template <class ItemType>
 class ListInterface {
-    public :
+    
+    public:
     /** Sees whether this list is empty.
      @return True if the list is empty; otherwise returns false. */
     virtual bool isEmpty() const = 0;
@@ -68,7 +115,7 @@ class ListInterface {
      @param newPosition The list position at which to insert newEntry.
      @param newEntry The entry to insert into the list.
      @return True if insertion is successful, or false if not. */
-    virtual bool insert( int newPosition, const ItemType& newEntry) = 0;
+    virtual bool insert(int newPosition, const ItemType& newEntry) = 0;
     
     /** Removes the entry at a given position from this list.
      @pre None.
@@ -77,7 +124,7 @@ class ListInterface {
      items are renumbered accordingly, and the returned value is true.
      @param position The list position of the entry to remove.
      @return True if removal is successful, or false if not. */
-    virtual bool remove( int position) = 0;
+    virtual bool remove(int position) = 0;
     
     /** Removes all entries from this list.
      @post List contains no entries and the count of items is 0. */
@@ -88,26 +135,203 @@ class ListInterface {
      @post The desired entry has been returned.
      @param position The list position of the desired entry.
      @return The entry at the given position. */
-    virtual ItemType getEntry( int position) const = 0;
+    virtual ItemType getEntry(int position) const = 0;
     
     /** Replaces the entry at the given position in this list.
      @pre 1 <= position <= getLength().
      @post The entry at the given position is newEntry.
      @param position The list position of the entry to replace.
      @param newEntry The replacement entry. */
-    virtual void setEntry( int position, const ItemType& newEntry) = 0;
+    virtual void setEntry(int position, const ItemType& newEntry) = 0;
 };
 
 
+
+
+
+
 template <class ItemType>
-class SortedListInterface: ListInterface<ItemType> {
-    public :
+class LinkedList : public ListInterface<ItemType> {
+    private :
+    Node<ItemType>* headPtr;
+    int itemCount;
+
+    Node<ItemType>* getNodeAt(int position) const {
+        
+        assert ((position >= 1) && (position <= itemCount));
+        Node<ItemType>* curPtr = headPtr;
+        
+        for (int skip = 1; skip < position; skip++) {
+         
+            curPtr = curPtr->getNext();
+        }
+        
+        return curPtr ;
+    }
+    
+    public:
+    LinkedList() : headPtr(nullptr), itemCount(0) {}
+    
+    
+    LinkedList(const LinkedList<ItemType>& aList) {
+
+        if (aList.isEmpty()) {
+            
+            LinkedList();
+        }
+        else {
+            
+            LinkedList<ItemType>* tempList = new LinkedList<ItemType>();
+            
+            for (int index = 1; index < aList.getLength(); index++) {
+                
+                tempList->insert(index, aList.getEntry(index));
+            }
+            
+            headPtr = tempList->headPtr;
+            itemCount = tempList->itemCount;
+            delete tempList;
+        }
+    }
+    
+    
+    virtual ~LinkedList() {
+
+        clear();
+    }
+    
+    
+    bool isEmpty() const {
+        
+        return itemCount == 0;
+    }
+    
+    
+    int getLength() const {
+        
+        return itemCount;
+    }
+    
+    
+    bool insert(int newPosition, const ItemType& newEntry) {
+        
+        bool ableToInsert = (newPosition >= 1) && (newPosition <= itemCount + 1);
+        
+        if (ableToInsert) {
+            
+            Node<ItemType>* newNodePtr = new Node<ItemType>(newEntry);
+
+            if (newPosition == 1) {
+                
+                newNodePtr->setNext(headPtr);
+                headPtr = newNodePtr;
+            }
+            else {
+
+                Node<ItemType>* prevPtr = getNodeAt(newPosition - 1);
+
+                newNodePtr->setNext(prevPtr->getNext());
+                prevPtr->setNext(newNodePtr);
+            }
+            
+            itemCount++;
+        }
+        
+        return ableToInsert;
+    }
+    
+    
+    bool remove(int position) {
+        
+        bool ableToRemove = (position >= 1) && (position <= itemCount);
+        
+        if (ableToRemove) {
+            Node<ItemType>* curPtr = nullptr;
+            
+            if (position == 1) {
+
+                curPtr = headPtr;
+                headPtr = headPtr->getNext();
+            }
+            else {
+
+                Node<ItemType>* prevPtr = getNodeAt(position - 1);
+
+                curPtr = prevPtr->getNext();
+                prevPtr->setNext(curPtr->getNext());
+            }
+
+            curPtr->setNext( nullptr );
+            delete curPtr;
+            curPtr = nullptr ;
+            itemCount--;
+        }
+        
+        return ableToRemove;
+    }
+    
+    
+    void clear() {
+
+        while (!isEmpty()) {
+            remove(1);
+        }
+    }
+    
+    
+    ItemType getEntry(int position) const throw(PrecondViolatedExcep) {
+        
+        bool ableToGet = (position >= 1) && (position <= itemCount);
+        
+        if (ableToGet) {
+            
+            Node<ItemType>* nodePtr = getNodeAt(position);
+            
+            return nodePtr->getItem();
+        }
+        else {
+            
+            string message = "getEntry() called with an empty list or ";
+            message = message + "invalid position.";
+            
+            throw PrecondViolatedExcep(message);
+        }
+    }
+    
+
+    void setEntry(int position, const ItemType& newEntry) throw (PrecondViolatedExcep) {
+        
+        bool ableToGet = (position >= 1) && (position <= itemCount);
+        
+        if (ableToGet) {
+            
+            Node<ItemType>* nodePtr = getNodeAt(position);
+            nodePtr->setItem(newEntry);
+        }
+        else {
+            
+            string message = "setEntry() called with an empty list or ";
+            message = message + "invalid position.";
+            
+            throw PrecondViolatedExcep(message);
+        }
+    }
+};
+
+
+
+
+
+template <class ItemType>
+class SortedListInterface: LinkedList<ItemType> {
+    
+    public:
     /** Inserts an entry into this sorted list in its proper order
      so that the list remains sorted.
      @pre None.
      @post newEntry is in the list, and the list is sorted.
      @param newEntry The entry to insert into the sorted list. */
-    virtual void insertSorted( const ItemType& newEntry) = 0;
+    virtual void insertSorted(const ItemType& newEntry) = 0;
     
     /** Removes the first or only occurrence of the given entry from this
      sorted list.
@@ -118,7 +342,7 @@ class SortedListInterface: ListInterface<ItemType> {
      returned value is false.
      @param anEntry The entry to remove.
      @return True if removal is successful, or false if not. */
-    virtual bool removeSorted( const ItemType& anEntry) = 0;
+    virtual bool removeSorted(const ItemType& anEntry) = 0;
     
     /** Gets the position of the first or only occurrence of the given
      entry in this sorted list. In case the entry is not in the list,
@@ -130,7 +354,7 @@ class SortedListInterface: ListInterface<ItemType> {
      @return Either the position of the given entry, if it occurs in the
      sorted list, or the position where the entry would occur, but as a
      negative integer. */
-    virtual int getPosition( const ItemType& anEntry) = 0;
+    virtual int getPosition(const ItemType& anEntry) = 0;
     
     // The following methods are the same as those given in ListInterface
     // in Listing 8-1 of Chapter 8 and are completely specified there.
@@ -141,80 +365,54 @@ class SortedListInterface: ListInterface<ItemType> {
     virtual int getLength() const = 0;
     
     /** Removes the entry at a given position from this list. */
-    virtual bool remove( int position) = 0;
+    virtual bool remove(int position) = 0;
     
     /** Removes all entries from this list. */
     virtual void clear() = 0;
     
     /** Gets the entry at the given position in this list. */
-    virtual ItemType getEntry( int position) const = 0;
+    virtual ItemType getEntry(int position) const = 0;
 };
 
 
-template < class ItemType>
-class SortedListHasA : public SortedListInterface<ItemType>
-{
-    private :
+
+
+
+
+template <class ItemType>
+class SortedListHasA : public SortedListInterface<ItemType> {
+    
+    private:
     ListInterface<ItemType>* listPtr;
     int itemCount;
     
-    public :
-    SortedListHasA();
+    public:
+    SortedListHasA() {
+        itemCount = 0;
+        listPtr = new (<#expressions#>)
+    }
+    
     SortedListHasA(const SortedListHasA<ItemType>& sList);
     virtual ~SortedListHasA();
-    void insertSorted( const ItemType& newEntry);
-    bool removeSorted( const ItemType& anEntry);
-    int getPosition( const ItemType& newEntry) const;
+    void insertSorted(const ItemType& newEntry);
+    bool removeSorted(const ItemType& anEntry);
+    int getPosition(const ItemType& newEntry) const;
 
-    bool isEmpty() const {
-        return itemCount == 0;
-    }
+    bool isEmpty() const {}
     
-    int getLength() const {
-        return itemCount;
-    }
+    int getLength() const {}
     
-    bool remove(int position) {
-        bool ableToRemove = (position >= 1) && (position <= itemCount);
-        
-        if (ableToRemove) {
-            
-            for (int fromIndex = position, toIndex = fromIndex - 1;
-                 fromIndex < itemCount; fromIndex++, toIndex++) {
-                
-                listPtr[toIndex] = listPtr[fromIndex];
-            }
-            
-            itemCount--;
-        }
-        
-        return ableToRemove;
-    }
+    bool remove(int position) {}
     
-    void clear() {
-        for (int index = 0; index < itemCount; index++) {
-            
-            listPtr[index] = NULL;
-        }
-        
-        itemCount = 0;
-    }
+    void clear() {}
     
-    ItemType getEntry( int position) const throw(PrecondViolatedExcep) {
-        bool ableToGet = (position >= 1) && (position <= itemCount);
-        
-        if (ableToGet) {
-            
-            return listPtr[position - 1];
-        }
-        else {
-            
-            string message = "getEntry() called with an empty list or ";
-            message = message + "invalid position.";
-            throw(PrecondViolatedExcep(message));
-        }
-    }
+    ItemType getEntry(int position) const throw(PrecondViolatedExcep) {}
 };
+
+
+
+
+
 
 int main(int argc, const char * argv[]) {
     return 0;
