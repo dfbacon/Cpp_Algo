@@ -3,66 +3,24 @@
 //  Assignment: Module09 - Ch 12 Programming Problem #3
 //
 
-/*
- Complete the implementation of the class SortedListHasA.
- 
- For this assignment, implement a high score system using a SortedListHasA to
- sort scores from highest to lowest.
- 
- Seed the high score list with a few dummy scores, ala vintage arcade games,
- (e.g. 555,444,333,222,111).
- 
- Your program should print out a list of scores
- 
- Ask the user for a new score, insert the new score in the correct position,
- print out the new score list
- 
- let the user keep entering scores and displaying the sorted list until the user
- quits. (the user indicates a quit state by entering a sentinel - a negative
- value for a high score).
- 
- In rough pseudo-code, we are looking at:
- 
- insertSorted(111); ... insertSorted(555)
- displayList displays 555, 444, 333, 222, 111
- insertSorted(300)
- displayList displays 555, 444, 333, 300, 222, 111
- Loop for new scores until newScore < 0
- insertSorted(newScore)
- displayList
- 
- Unlike vintage arcade games, we are just storing the scores and not associated
- names or initials of who got the score.
- */
-
 #include <iostream>
-#include <string>
-#include <stdexcept>
 #include <cstddef>
 #include <cassert>
+#include <cmath>
 
 using namespace std;
-
-class PrecondViolatedExcep: public logic_error {
-    
-    public:
-    PrecondViolatedExcep(const string& message = "") :
-        logic_error("Precondition Violated Exception: " + message){}
-};
-
-
-
-
 
 
 template <class ItemType>
 class Node {
     
-    private:
+private:
+    
     ItemType item;
     Node<ItemType>* next;
     
-    public :
+public:
+    
     Node() : next(nullptr) {}
     Node(const ItemType& anItem) : item(anItem), next(nullptr) {}
     Node(const ItemType& anItem, Node<ItemType>* nextNodePtr) :
@@ -97,7 +55,8 @@ class Node {
 template <class ItemType>
 class ListInterface {
     
-    public:
+public:
+    
     /** Sees whether this list is empty.
      @return True if the list is empty; otherwise returns false. */
     virtual bool isEmpty() const = 0;
@@ -152,7 +111,9 @@ class ListInterface {
 
 template <class ItemType>
 class LinkedList : public ListInterface<ItemType> {
-    private :
+    
+private:
+    
     Node<ItemType>* headPtr;
     int itemCount;
 
@@ -161,7 +122,7 @@ class LinkedList : public ListInterface<ItemType> {
         assert ((position >= 1) && (position <= itemCount));
         Node<ItemType>* curPtr = headPtr;
         
-        for (int skip = 1; skip < position; skip++) {
+        for (int index = 1; index < position; index++) {
          
             curPtr = curPtr->getNext();
         }
@@ -169,7 +130,8 @@ class LinkedList : public ListInterface<ItemType> {
         return curPtr ;
     }
     
-    public:
+public:
+    
     LinkedList() : headPtr(nullptr), itemCount(0) {}
     
     
@@ -261,9 +223,9 @@ class LinkedList : public ListInterface<ItemType> {
                 prevPtr->setNext(curPtr->getNext());
             }
 
-            curPtr->setNext( nullptr );
+            curPtr->setNext(nullptr);
             delete curPtr;
-            curPtr = nullptr ;
+            curPtr = nullptr;
             itemCount--;
         }
         
@@ -278,8 +240,8 @@ class LinkedList : public ListInterface<ItemType> {
         }
     }
     
-    
-    ItemType getEntry(int position) const throw(PrecondViolatedExcep) {
+
+    ItemType getEntry(int position) const {
         
         bool ableToGet = (position >= 1) && (position <= itemCount);
         
@@ -291,16 +253,13 @@ class LinkedList : public ListInterface<ItemType> {
         }
         else {
             
-            string message = "getEntry() called with an empty list or ";
-            message = message + "invalid position.";
-            
-            throw PrecondViolatedExcep(message);
+            return NULL;
         }
     }
     
 
-    void setEntry(int position, const ItemType& newEntry) throw (PrecondViolatedExcep) {
-        
+    void setEntry(int position, const ItemType& newEntry) {
+    
         bool ableToGet = (position >= 1) && (position <= itemCount);
         
         if (ableToGet) {
@@ -308,14 +267,8 @@ class LinkedList : public ListInterface<ItemType> {
             Node<ItemType>* nodePtr = getNodeAt(position);
             nodePtr->setItem(newEntry);
         }
-        else {
-            
-            string message = "setEntry() called with an empty list or ";
-            message = message + "invalid position.";
-            
-            throw PrecondViolatedExcep(message);
-        }
     }
+    
 }; // End LinkedList
 
 
@@ -325,7 +278,8 @@ class LinkedList : public ListInterface<ItemType> {
 template <class ItemType>
 class SortedListInterface: LinkedList<ItemType> {
     
-    public:
+public:
+    
     /** Inserts an entry into this sorted list in its proper order
      so that the list remains sorted.
      @pre None.
@@ -354,7 +308,7 @@ class SortedListInterface: LinkedList<ItemType> {
      @return Either the position of the given entry, if it occurs in the
      sorted list, or the position where the entry would occur, but as a
      negative integer. */
-    virtual int getPosition(const ItemType& anEntry) = 0;
+    virtual int getPosition(const ItemType& anEntry) const = 0;
     
     // The following methods are the same as those given in ListInterface
     // in Listing 8-1 of Chapter 8 and are completely specified there.
@@ -372,6 +326,7 @@ class SortedListInterface: LinkedList<ItemType> {
     
     /** Gets the entry at the given position in this list. */
     virtual ItemType getEntry(int position) const = 0;
+    
 }; // End SortedListInterface
 
 
@@ -382,10 +337,12 @@ class SortedListInterface: LinkedList<ItemType> {
 template <class ItemType>
 class SortedListHasA : public SortedListInterface<ItemType> {
     
-    private:
+private:
+    
     ListInterface<ItemType>* listPtr;
     
-    public:
+public:
+    
     SortedListHasA() {
         
         listPtr = new LinkedList<ItemType>();
@@ -411,31 +368,57 @@ class SortedListHasA : public SortedListInterface<ItemType> {
     
     void insertSorted(const ItemType& newEntry) {
         
-        int newPosition = fabs(getPosition(newEntry));
+        int newPosition;
+        
+        if (isEmpty()) {
+            
+            newPosition = 1;
+        }
+        else {
+            
+            newPosition = fabs(getPosition(newEntry));
+        }
         
         listPtr->insert(newPosition, newEntry);
     }
     
-    // TODO
+
     bool removeSorted(const ItemType& anEntry) {
         
+        int target = getPosition(anEntry);
+        bool ableToRemove = target > 1;
         
+        if (ableToRemove) {
+            
+            return listPtr->remove(target);
+        }
+        
+        return ableToRemove;
     }
     
 
-    int getPosition(const ItemType& newEntry) const {
+    int getPosition(const ItemType& anEntry) const {
+ 
+        if (getLength() == 1) {
+            
+            if (getEntry(1) <= anEntry) {
+                return -1;
+            }
+            
+            return -2;
+        }
+        
+        for (int backIndex = 1, frontIndex = backIndex + 1; backIndex <= getLength(); backIndex++, frontIndex++) {
 
-        for (int backIndex = 1, frontIndex = backIndex + 1; backIndex <= getLength(); backIndex++) {
-
-            if (getEntry(backIndex) == newEntry) {
+            if (getEntry(backIndex) <= anEntry) {
                 
                 return backIndex;
             }
-            else if (getEntry(frontIndex) == newEntry) {
+            else if (getEntry(frontIndex) == anEntry) {
                 
                 return frontIndex;
             }
-            else if (getEntry(backIndex) > newEntry && getEntry(frontIndex) < newEntry) {
+            else if (getEntry(backIndex) > anEntry && getEntry(frontIndex) < anEntry) {
                 
                 return frontIndex * -1;
             }
@@ -452,7 +435,7 @@ class SortedListHasA : public SortedListInterface<ItemType> {
     
     
     int getLength() const {
-        
+
         return listPtr->getLength();
     }
     
@@ -469,10 +452,11 @@ class SortedListHasA : public SortedListInterface<ItemType> {
     }
     
     
-    ItemType getEntry(int position) const throw(PrecondViolatedExcep) {
-        
+    ItemType getEntry(int position) const {
+    
         return listPtr->getEntry(position);
     }
+    
 }; // End SortedListHasA
 
 
@@ -480,6 +464,98 @@ class SortedListHasA : public SortedListInterface<ItemType> {
 
 
 
+template <class ItemType>
+class ArcadeScores : public SortedListHasA<ItemType> {
+    
+private:
+    
+    SortedListHasA<ItemType> highScores;
+    
+public:
+    
+    ArcadeScores() {
+        
+        highScores.insertSorted(100);
+        highScores.insertSorted(300);
+        highScores.insertSorted(200);
+        highScores.insertSorted(400);
+        highScores.insertSorted(500);
+    }
+    
+    
+    ~ArcadeScores() {
+        
+        clear();
+    }
+    
+    
+    void displayScores() {
+        
+        for (int index = 1; index <= highScores.getLength(); index++) {
+            
+            cout << highScores.getEntry(index) << endl;
+        }
+        
+        cout << endl;
+    }
+    
+    
+    void insertSorted(const ItemType& newEntry) {
+
+        highScores.insertSorted(newEntry);
+    }
+    
+    
+    void clear() {
+        
+        highScores.clear();
+    }
+    
+}; // End ArcadeScores
+
+
+
+
+
+
 int main(int argc, const char * argv[]) {
+
+    ArcadeScores<int> highScoreList;
+
+    bool continueAdding = false;
+    int newScore;
+    
+    do {
+        
+        cout << "Current high scores are: " << endl;
+        highScoreList.displayScores();
+        
+        cout << "Enter a new high score, or a negative value to exit: ";
+        while (cin.fail()) {
+            
+            cin.clear();
+            cin.ignore();
+            cout << "\nInvalid input..." << endl;
+            cout << "Enter a new high score, or a negative value to exit: ";
+        }
+        
+        cin >> newScore;
+        
+        if (newScore < 0) {
+
+            continueAdding = false;
+        }
+        else {
+
+            highScoreList.insertSorted(newScore);
+            continueAdding = true;
+        }
+        
+    } while (continueAdding);
+    
+    cout << "Finished.\nHigh scores are: " << endl;
+    highScoreList.displayScores();
+    cout << "Exiting..." << endl;
+    
     return 0;
 }
