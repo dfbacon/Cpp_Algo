@@ -31,5 +31,10 @@ int main()
     testTree->add(7);
     testTree->add(9);
     testTree->add(11);
+    cout << "inorder:" << endl;
     testTree->inorderTraverse(visit);
+    cout << "\npreorder:" << endl;
+    testTree->preorderTraverse(visit);
+    cout << "\npostorder:" << endl;
+    testTree->postorderTraverse(visit);
 }

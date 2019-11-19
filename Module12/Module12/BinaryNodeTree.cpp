@@ -89,8 +89,13 @@ void BinaryNodeTree<ItemType>::destroyTree(BinaryNode<ItemType>* subTreePtr) {
 template<class ItemType>
 void BinaryNodeTree<ItemType>::preorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const {
 
-    //    stub for preorder
-
+    if (treePtr != nullptr) {
+        
+        ItemType theItem = treePtr->getItem();
+        visit(theItem);
+        preorder(visit, treePtr->getLeftChildPtr());
+        preorder(visit, treePtr->getRightChildPtr());
+    }
 }  // end preorder
 
 template<class ItemType>
@@ -108,8 +113,13 @@ void BinaryNodeTree<ItemType>::inorder(void visit(ItemType&), BinaryNode<ItemTyp
 template<class ItemType>
 void BinaryNodeTree<ItemType>::postorder(void visit(ItemType&), BinaryNode<ItemType>* treePtr) const {
     
-    //    stub for postorder
-
+    if (treePtr != nullptr) {
+        
+        postorder(visit, treePtr->getLeftChildPtr());
+        postorder(visit, treePtr->getRightChildPtr());
+        ItemType theItem = treePtr->getItem();
+        visit(theItem);
+    }
 }  // end postorder
 
 //////////////////////////////////////////////////////////////
@@ -233,7 +243,7 @@ bool BinaryNodeTree<ItemType>::contains(const ItemType& anEntry) const {
 template<class ItemType>
 void BinaryNodeTree<ItemType>::preorderTraverse(void visit(ItemType&)) const {
     
-    // stub for preorderTraverse
+    preorder(visit, rootPtr);
 }  // end preorderTraverse
 
 template<class ItemType>
@@ -245,7 +255,7 @@ void BinaryNodeTree<ItemType>::inorderTraverse(void visit(ItemType&)) const {
 template<class ItemType>
 void BinaryNodeTree<ItemType>::postorderTraverse(void visit(ItemType&)) const {
     
-    // stub for postorderTraverse
+    postorder(visit, rootPtr);
 }  // end postorderTraverse
 
 
