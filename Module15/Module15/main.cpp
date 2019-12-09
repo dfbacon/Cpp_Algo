@@ -113,13 +113,35 @@ private:
     int birthday;
     
 public:
-    //TODO: get/set for each data member
+    Person(const string newName, const int newBirthday) : name(newName),
+        birthday(newBirthday) {}
+    
+    string getName() const {
+        
+        return name;
+    }
+    
+    void setName(const string newName) {
+        
+        name = newName;
+    }
+    
+    int getBirthday() const {
+        
+        return birthday;
+    }
+    
+    void setBirthday (const int newBirthday) {
+        
+        birthday = newBirthday;
+    }
 };
 
 
 
 
 
+// Implement as a minHeap of Nodes, containing Person data
 template <class ItemType>
 class DictionaryOfPerson {
     
