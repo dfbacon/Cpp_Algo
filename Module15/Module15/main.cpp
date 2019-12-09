@@ -4,7 +4,9 @@
 //
 
 #include <iostream>
+#include <string>
 
+using namespace std;
 /*
  
  For this assignment, you will implement a dictionary to track the name and
@@ -34,6 +36,89 @@
     demonstrates your dictionary.
  
  */
+
+
+template <class ItemType>
+class Node {
+    
+private:
+    ItemType data;
+    Node<ItemType>* leftChild;
+    Node<ItemType>* rightChild;
+    
+public:
+    Node() : data(NULL), leftChild(nullptr), rightChild(nullptr) {}
+    
+    Node(const ItemType& newData) : data(newData), leftChild(nullptr),
+        rightChild(nullptr) {}
+    
+    Node(const ItemType& newData, Node<ItemType>* left, Node<ItemType>* right) :
+        data(newData), leftChild(left), rightChild(right) {}
+    
+    ItemType getData() const {
+        
+        return data;
+    }
+    
+    void setData(const ItemType& newData) {
+        
+        data = newData;
+    }
+    
+    Node<ItemType>* getLeftChild() const {
+    
+        return leftChild;
+    }
+    
+    Node<ItemType>* getRightChild() const {
+        
+        return rightChild;
+    }
+    
+    void setLeftChild(Node<ItemType>* left) {
+    
+        leftChild = left;
+    }
+    
+    void setRightChild(Node<ItemType>* right) {
+        
+        rightChild = right;
+    }
+    
+    bool hasLeftChild() {
+        
+        return leftChild != nullptr;
+    }
+    
+    bool hasRightChild() {
+        
+        return rightChild != nullptr;
+    }
+    
+    bool isLeaf() {
+        
+        return leftChild == nullptr && rightChild == nullptr;
+    }
+};
+
+
+
+
+
+template <class ItemType>
+class Person {
+
+private:
+    string name;
+    int birthday;
+    
+public:
+    //TODO: get/set for each data member
+};
+
+
+
+
 
 template <class ItemType>
 class DictionaryOfPerson {
