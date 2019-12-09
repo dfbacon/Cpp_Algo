@@ -110,11 +110,16 @@ class Person {
 
 private:
     string name;
-    int birthday;
+    int day;
+    int month;
+    int year;
     
 public:
-    Person(const string newName, const int newBirthday) : name(newName),
-        birthday(newBirthday) {}
+    Person(const string newName) : name(newName), day(0), month(0), year(0) {}
+    
+    Person(const string newName, const int newDay, const int newMonth,
+           const int newYear) : name(newName), day(newDay), month(newMonth),
+            year(newYear) {}
     
     string getName() const {
         
@@ -126,14 +131,34 @@ public:
         name = newName;
     }
     
-    int getBirthday() const {
+    int getDay() const {
         
-        return birthday;
+        return day;
     }
     
-    void setBirthday (const int newBirthday) {
+    void setDay(const int newDay) {
         
-        birthday = newBirthday;
+        day = newDay;
+    }
+    
+    int getMonth() const {
+        
+        return month;
+    }
+    
+    void setMonth(const int newMonth) {
+        
+        month = newMonth;
+    }
+    
+    int getYear() const {
+        
+        return year;
+    }
+    
+    void setYear(const int newYear) {
+        
+        year = newYear;
     }
 };
 
