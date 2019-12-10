@@ -46,6 +46,7 @@ private:
     Node<ItemType>* leftChild;
     Node<ItemType>* rightChild;
     
+    
 public:
     Node() : data(NULL), leftChild(nullptr), rightChild(nullptr) {}
     
@@ -100,7 +101,6 @@ public:
         return leftChild == nullptr && rightChild == nullptr;
     }
 };
-
 
 
 
@@ -166,15 +166,175 @@ public:
 
 
 
-// Implement as a minHeap of Nodes, containing Person data
 template <class ItemType>
 class DictionaryOfPerson {
     
 private:
+    Node<ItemType>* root;
+    
+    
+protected:
+    int getHeightHelper(Node<ItemType>* subTreePtr) const {
+        
+        if (subTreePtr == nullptr) {
+            
+            return 0;
+            
+        } else {
+            
+            return 1 + max(getHeightHelper(subTreePtr->getLeftChild()),
+                           getHeightHelper(subTreePtr->getRightChild()));
+        }
+    }
+    
+    Node<ItemType>* balancedAdd(Node<ItemType>* subTreePtr,
+                                Node<ItemType>* newNode) {
+        
+        if (subTreePtr == nullptr) {
+            
+            return newNode;
+            
+        } else {
+            
+            Node<ItemType>* left = subTreePtr->getLeftChild();
+            Node<ItemType>* right = subTreePtr->getRightChild();
+            
+            if (getHeightHelper(left) > getHeightHelper(right)) {
+                
+                right = balancedAdd(right , newNode);
+                subTreePtr->setRightChild(right );
+                
+            } else {
+                
+                left = balancedAdd(left, newNode);
+                subTreePtr->setLeftChild(left);
+            }
+            
+            return subTreePtr;
+        }
+    }
+    
+    void destroyTree(Node<ItemType>* subTreePtr) {
+        
+        if (subTreePtr != nullptr) {
+            
+            destroyTree(subTreePtr->getLeftChild());
+            destroyTree(subTreePtr->getRightChild());
+            
+            delete subTreePtr;
+        }
+    }
+    
+    Node<ItemType>* findEntry(Node<ItemType>* currentNode, ItemType anEntry) {
+        
+        Node<ItemType> result = nullptr;
+        
+        if (currentNode != nullptr) {
+            
+            ItemType currentEntry = currentNode->getData();
+            
+            if (anEntry.compare(currentEntry->name) == 0) {
+                
+                result = currentNode;
+                
+            } else if (anEntry.compare(currentEntry->name) < 0) {
+                
+                result = findEntry(currentNode->getLeftChild(), anEntry);
+                
+            } else {
+                
+                result = findEntry(currentNode->getRightChild(), anEntry);
+            }
+        }
+        
+        return result;
+    }
+    
+    Node<ItemType>* copyTree(const Node<ItemType>* currentTree) const {
+        
+        Node<ItemType>* newTree = nullptr;
+        
+        if (currentTree != nullptr) {
+            
+            newTree = new Node<ItemType>(currentTree->getItem(), nullptr, nullptr);
+            newTree->setLeftChild(copyTree(currentTree->getLeftChild()));
+            newTree->setRightChild(copyTree(currentTree->getRightChild()));
+        }
+        
+        return newTree;
+    }
+    
+    void inorder(void visit(ItemType&), Node<ItemType>* treePtr) const {
+        
+        if (treePtr != nullptr) {
+            
+            inorder(visit, treePtr->getLeftChildPtr());
+            ItemType theItem = treePtr->getItem();
+            visit(theItem);
+            inorder(visit, treePtr->getRightChildPtr());
+        }
+    }
+    
+    // TODO
+    Node<ItemType>* removeValue(Node<ItemType>* subTreePtr,
+                                const ItemType target, bool& success);
+    Node<ItemType>* moveValuesUpTree(Node<ItemType>* subTreePtr);
+    
     
 public:
+    DictionaryOfPerson() : root(nullptr) {}
     
+    DictionaryOfPerson(const ItemType& rootItem) {
+        
+        root = new Node<ItemType>(rootItem, nullptr, nullptr);
+    }
+    
+    DictionaryOfPerson(const ItemType& rootItem,
+                     const DictionaryOfPerson<ItemType>* leftTreePtr,
+                     const DictionaryOfPerson<ItemType>* rightTreePtr) {
+        
+        root = new Node<ItemType>(rootItem, copyTree(leftTreePtr->root),
+                                  copyTree(rightTreePtr->root));
+    }
+    
+    DictionaryOfPerson(const DictionaryOfPerson<ItemType>& tree) {
+        
+        root = copyTree(tree.root);
+    }
+    
+    ~DictionaryOfPerson() {
+        
+        destroyTree(root);
+    }
+    
+    bool isEmpty() const {
+        
+        return root == nullptr;
+    }
+    
+    void add(const ItemType& newData) {
+        
+        Node<ItemType>* newNode = new Node<ItemType>(newData);
+        root = balancedAdd(root, newNode);
+    }
+    
+    // TODO
+    bool remove(const ItemType& data);
+    
+    ItemType getEntry(const ItemType& anEntry) const {
+        
+        return findEntry(root, anEntry);
+    }
+    
+    void inorderTraverse(void visit(ItemType&)) const {
+        
+        inorder(visit, root);
+    }
 };
+
+
+
+
 
 int main(int argc, const char * argv[]) {
 
