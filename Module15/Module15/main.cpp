@@ -4,6 +4,7 @@
 //
 
 #include <iostream>
+#include <vector>
 #include <string>
 
 /*
@@ -100,10 +101,39 @@ public:
     }
 };
 
+template <class ItemType>
+class MinHeapTemplate {
+    
+private:
+    std::vector<ItemType> priorityQueue;
+    int size;
+    
+protected:
+    virtual void bubbleUp(int index) = 0;
+    virtual void trickleDown(int index) = 0;
+    virtual int getMinimumIndex(int firstIndex, int secondIndex, int thirdIndex) = 0;
+    
+public:
+    virtual bool isEmpty() const = 0;
+    virtual int getSize() const = 0;
+    virtual void clear() const = 0;
+    virtual ItemType& getItem(const int index) const = 0;
+    virtual int hasParent(const int index) const = 0;
+    virtual int hasChild(const int index) const = 0;
+    virtual int getIndex(const int index, const ItemType& value) const = 0;
+    virtual void insert(const ItemType& newValue) = 0;
+    virtual void remove(ItemType& targetValue) = 0;
+    virtual void heapify(std::vector<ItemType>& input);
+    virtual ItemType& dequeue() = 0;
+    virtual std::vector<ItemType> heapSort() = 0;
+};
 
+template <class ItemType>
+class DictionaryOfPersons : public MinHeapTemplate<ItemType> {
 
-class DictionaryOfPerson {
-
+private:
+protected:
+public:
 };
 
 
