@@ -4,8 +4,11 @@
 //
 
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <string>
+
+using namespace std;
 
 /*
  
@@ -40,17 +43,19 @@
 class Person {
     
 private:
-    std::string name;
+    string name;
     int day;
     int month;
     int year;
     
 public:
-    Person(const std::string newName) : name(newName), day(0), month(0), year(0) {}
+    Person() : name("empty"), day(0), month(0), year(0) {}
     
-    Person(const std::string newName, const int newDay, const int newMonth,
+    Person(const string newName) : name(newName), day(0), month(0), year(0) {}
+    
+    Person(const string newName, const int newDay, const int newMonth,
            const int newYear) : name(newName), day(newDay), month(newMonth),
-            year(newYear) {}
+    year(newYear) {}
     
     Person(const Person& existingPerson) {
         
@@ -60,12 +65,12 @@ public:
         year = existingPerson.getYear();
     }
     
-    std::string getName() const {
+    string getName() const {
         
         return name;
     }
     
-    void setName(const std::string newName) {
+    void setName(const string newName) {
         
         name = newName;
     }
@@ -99,41 +104,68 @@ public:
         
         year = newYear;
     }
+    
+    void printBirthday() {
+        
+        cout << setfill('0') << setw(2) << month << "/" << setfill('0') <<
+        setw(2) << day << "/" << setw(4) << year << endl;
+    }
 };
 
-template <class ItemType>
-class MinHeapTemplate {
-    
+
+
+
+
+class DictionaryOfPersons {
+
 private:
-    std::vector<ItemType> priorityQueue;
+    vector<Person*> priorityQueue;
     int size;
+    int MINIMUM_NUMBER_ELEMENTS = 10;
     
 protected:
-    virtual void bubbleUp(int index) = 0;
-    virtual void trickleDown(int index) = 0;
-    virtual int getMinimumIndex(int firstIndex, int secondIndex, int thirdIndex) = 0;
+    void bubbleUp(int index) {}
+//    void trickleDown(int index);
+//    int getMinimumIndex(int firstIndex, int secondIndex, int thirdIndex);
     
 public:
-    virtual bool isEmpty() const = 0;
-    virtual int getSize() const = 0;
-    virtual void clear() const = 0;
-    virtual ItemType& getItem(const int index) const = 0;
-    virtual int hasParent(const int index) const = 0;
-    virtual int hasChild(const int index) const = 0;
-    virtual int getIndex(const int index, const ItemType& value) const = 0;
-    virtual void insert(const ItemType& newValue) = 0;
-    virtual void remove(ItemType& targetValue) = 0;
-    virtual void heapify(std::vector<ItemType>& input);
-    virtual ItemType& dequeue() = 0;
-    virtual std::vector<ItemType> heapSort() = 0;
-};
+    DictionaryOfPersons() : priorityQueue(NULL), size(0) {}
+    
+    bool isEmpty() const {
+        
+        return size == 0;
+    }
+    
+    int getSize() const {
+        
+        return size;
+    }
 
-template <class ItemType>
-class DictionaryOfPersons : public MinHeapTemplate<ItemType> {
+    
+    Person* getItem(const int index) const {
 
-private:
-protected:
-public:
+        return priorityQueue[index];
+    }
+    
+//    int hasParent(const int index) const;
+//    int hasChild(const int index) const;
+//    int getIndex(const int index, const string value) const;
+    void insert(Person* newValue) {
+
+        priorityQueue.push_back(newValue);
+        size++;
+        bubbleUp(size);
+    }
+//    void remove(Person* targetValue);
+//    void heapify(std::vector<Person>& input);
+//    Person& dequeue();
+//    vector<ItemType> heapSort();
+    
+    void checkContents() const {
+        for (int i = 0; i < size; i++) {
+            priorityQueue[i]->printBirthday();
+        }
+    }
 };
 
 
@@ -142,11 +174,20 @@ public:
 
 int main(int argc, const char * argv[]) {
 
-    // create person
+    Person Daniel("Daniel", 5, 1, 1988);
 
-    // create node to hold person
+    cout << Daniel.getName() << endl;
+    cout << &Daniel << endl;
 
-    // create dict of person
-    // insert node into dict
+    DictionaryOfPersons newDict;
+    cout << newDict.getSize() << "\n";
+
+    newDict.insert(&Daniel);
+    
+    cout << newDict.getSize() << endl;
+    
+    newDict.getItem(0)->printBirthday();
+    cout << newDict.getItem(newDict.getSize() - 1)->getName() << endl;
+
     return 0;
 }
